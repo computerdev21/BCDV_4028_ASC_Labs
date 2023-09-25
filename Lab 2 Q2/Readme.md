@@ -2,7 +2,7 @@ Lab 2 task 2 Screenshots
 
 <img width="1401" alt="Screenshot 2023-09-24 at 10 11 55 PM" src="https://github.com/computerdev21/BCDV_4028_ASC_Labs/assets/92196464/b5207c51-491e-4853-a18c-7dfc46b143c3">
 
-
+</br>
 --Deploying the Contract
 
 <img width="1377" alt="Screenshot 2023-09-24 at 10 12 21 PM" src="https://github.com/computerdev21/BCDV_4028_ASC_Labs/assets/92196464/f5da455b-c1d1-4bd2-a1a0-fa414c83e654">
