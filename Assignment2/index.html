@@ -50,7 +50,7 @@
 <script src="https://cdn.jsdelivr.net/npm/web3@1.3.6/dist/web3.min.js"></script>
 <script>
     $(document).ready(async function () {
-        const contractAddress = '0x0fd3801803EbC5fCd8d4B7133FD54c64ba684e15'; // Replace with your actual contract address
+        const contractAddress = '0xe5D4b70CD6de35C4437aC25e13F529cB968d74d9'; // Replace with your actual contract address
         const abi = [ [
             {
                 "inputs": [],
@@ -496,6 +496,7 @@
         await window.ethereum.enable();
 
         const contract = new web3.eth.Contract(abi[0], contractAddress);
+        console.log(contract.methods);
 
         // Function to mint NFT
         window.mintNFT = async function () {
@@ -509,7 +510,6 @@
 
                 // Mint NFT
                 const result = await contract.methods.safeMint(recipientAddress, ipfsUrl).send({ from: ethereum.selectedAddress });
-                ;
 
                 console.log('Transaction Hash:', result.transactionHash);
 
@@ -531,24 +531,28 @@
             const tokenList = $('#tokenList');
             tokenList.empty();
 
-            const totalSupply = await contract.methods.totalSupply().call();
+            const ownerAddress = await contract.methods.owner().call();
 
-            for (let i = 0; i < totalSupply; i++) {
-                const tokenId = await contract.methods.tokenByIndex(i).call();
-                const tokenURI = await contract.methods.tokenURI(tokenId).call();
+            // Subscribe to events to update UI when new NFTs are minted
+            contract.events.Transfer({ to: ownerAddress }, { fromBlock: 0, toBlock: 'latest' }, async function (error, event) {
+                if (!error) {
+                    const tokenId = event.returnValues.tokenId;
+                    const tokenURI = await contract.methods.tokenURI(tokenId).call();
 
-                // Display NFT card
-                const card = `
-            <div class="tokenCard">
-                <img src="${tokenURI}" alt="NFT Image" style="max-width: 100%; height: auto;">
-                <p>Token ID: ${tokenId}</p>
-            </div>
-        `;
-                tokenList.append(card);
-            }
+                    // Display NFT card
+                    const card = `
+                <div class="tokenCard">
+                    <img src="${tokenURI}" alt="NFT Image" style="max-width: 100%; height: auto;">
+                </div>
+            `;
+                    tokenList.append(card);
+                }
+            });
         };
+
+
         // Subscribe to events to update UI when new NFTs are minted
-        contract.events.Transfer({ to: ethereum.selectedAddress }, function (error, event) {
+        contract.events.Transfer({ to: ethereum.selectedAddress }, function (error) {
             if (!error) {
                 displayNFTs();
             }
